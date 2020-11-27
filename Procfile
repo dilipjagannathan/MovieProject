@@ -1,1 +1,1 @@
-web: gunicorn fruit_dashboard:server
+web: gunicorn movie_dashboard:server
