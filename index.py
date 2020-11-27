@@ -1,16 +1,14 @@
 """
 Solution to exercise #1 on Week 11
 """
-
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
 import os
-
-stylesheet = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+from app import app
+from app import server
 
 # pandas dataframe to html table
 def generate_table(dataframe, max_rows=10):
@@ -25,9 +23,9 @@ def generate_table(dataframe, max_rows=10):
         ])
     ])
 
-app = dash.Dash(__name__, external_stylesheets=stylesheet)
 
-server = app.server
+
+
 file_path = os.getcwd()
 df = pd.read_csv(file_path+os.sep+'output_df.csv', index_col=0, parse_dates=True)
 

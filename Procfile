@@ -1,1 +1,1 @@
-web: gunicorn movie_dashboard:server
+web: gunicorn index:server
