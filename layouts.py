@@ -210,13 +210,13 @@ layout = html.Div(
                     selected_style=tab_selected_style,
                 ),
                 dcc.Tab(
-                    label="User score vs Critic score",
-                    value="uservscritic-tab",
+                    label="Plot of 20 movies by User Ratings",
+                    value="plotratings-tab",
                     style=tab_style,
                     selected_style=tab_selected_style,
                 ),
                 dcc.Tab(
-                    label="Plot of 20 movies",
+                    label="Plot of 20 movies by User Count",
                     value="plot-tab",
                     style=tab_style,
                     selected_style=tab_selected_style,

@@ -12,6 +12,7 @@ import dash
 import dash_table
 from app import app
 import dash_core_components as dcc
+import plotly.express as px
 
 file_path = os.getcwd()
 df = pd.read_csv(file_path+os.sep+'output_df.csv', index_col=0, parse_dates=True)
@@ -22,6 +23,7 @@ def generate_data_table (dataframe):
     columns=[{"name": i, "id": i} for i in dataframe.columns],
     data=dataframe.to_dict('records'),
     )
+
 #pandas dataframe to html table
 def generate_table(dataframe, max_rows=10):
     return html.Table([
@@ -34,6 +36,13 @@ def generate_table(dataframe, max_rows=10):
             ]) for i in range(min(len(dataframe), max_rows))
         ])
     ])
+def clean_integer(x):
+    """ If the value is a string, then remove currency symbol and delimiters
+    otherwise, the value is numeric and can be converted
+    """
+    if isinstance(x, str):
+        return(x.replace(',', ''))
+    return(x)
 
 def get_about_info():
     return dcc.Markdown('''
@@ -122,9 +131,79 @@ def update_tab(tab, years, genres, ratings):
         return get_about_info()
     elif tab == "top20-tab": 
         return get_top20_data_table(df, years, genres, ratings)
-    elif tab == "uservscritic-tab":
-        return generate_table(df)
+    elif tab == "plotratings-tab":
+        return get_top_20_plot_based_on_user_ratings(df, years, genres, ratings)
     elif tab == "plot-tab": 
-        return generate_table(df)
+        return get_top_20_plot_based_on_user_count(df, years, genres, ratings)
     elif tab == "results-tab":  
         return get_results_data_table(df, years, genres, ratings)
+
+def get_top_20_plot_based_on_user_count(df, years, genres, ratings):
+    if (ratings == "IMDB"):
+        filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "summary", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    
+        filtered_df = filtered_df[filtered_df.year.isin(years)]
+        filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
+        filtered_df['user_count'] = filtered_df['Votes'].apply(clean_integer).astype(float)
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
+        filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
+        fig = px.bar(filtered_df, x='name', y='user_count')    
+        return dcc.Graph(figure=fig) 
+        # fig = px.bar(x=filtered_df.name, y=filtered_df["user_count"])
+      
+        # return dcc.Graph(figure=fig)
+    elif (ratings == "RT"):
+        filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "summary", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes'})     
+        filtered_df = filtered_df[filtered_df.year.isin(years)]
+        filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
+        filtered_df['user_count'] = filtered_df['User Votes'].apply(clean_integer).astype(float)
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
+        filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
+        fig = px.bar(filtered_df, x='name', y='user_count')
+        return dcc.Graph(figure=fig) 
+    elif (ratings == "MC"):
+        filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count", "summary", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes', 'MC_critics_rating': 'Critics Ratings', 'MC_critics_count': 'Critics Votes'})     
+        filtered_df = filtered_df[filtered_df.year.isin(years)]
+        filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
+        filtered_df['user_count'] = filtered_df['User Votes'].apply(clean_integer).astype(float)
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
+        filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
+        fig = px.bar(filtered_df, x='name', y='user_count')
+        return dcc.Graph(figure=fig) 
+    
+def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
+    if (ratings == "IMDB"):
+        filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "summary", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    
+        filtered_df = filtered_df[filtered_df.year.isin(years)]
+        filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
+        filtered_df['user_ratings'] = filtered_df['Ratings'].apply(clean_integer).astype(float)
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
+        fig = px.bar(filtered_df, x='name', y='user_ratings')    
+        return dcc.Graph(figure=fig) 
+    elif (ratings == "RT"):
+        filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "summary", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes'})     
+        filtered_df = filtered_df[filtered_df.year.isin(years)]
+        filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
+        filtered_df['user_ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
+        fig = px.bar(filtered_df, x='name', y='user_ratings')
+        return dcc.Graph(figure=fig) 
+    elif (ratings == "MC"):
+        filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count", "summary", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes', 'MC_critics_rating': 'Critics Ratings', 'MC_critics_count': 'Critics Votes'})     
+        filtered_df = filtered_df[filtered_df.year.isin(years)]
+        filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
+        filtered_df = filtered_df[~filtered_df['User Ratings'].isin(['tbd'])]
+        filtered_df['user_ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
+        
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
+        fig = px.bar(filtered_df, x='name', y='user_ratings')
+        return dcc.Graph(figure=fig)     
+
