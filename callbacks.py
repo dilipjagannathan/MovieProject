@@ -127,6 +127,7 @@ def get_results_data_table(df, years, genres, ratings):
      Input(component_id='ratings', component_property='value')]
 )
 def update_tab(tab, years, genres, ratings):
+    years = range (years[0], years[1], 1)
     if tab == "about-tab":
         return get_about_info()
     elif tab == "top20-tab": 
