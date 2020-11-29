@@ -20,6 +20,7 @@ current_year = date.today().year
 years = [ year for year in years if (year > 2010)  & (year <= current_year) ]
 years = sorted (years)
 genres_list=sorted(df.genres.str.split(',').explode().unique())
+genres_list= [ genre for genre in genres_list if "\\N" not in genre ]
 print (genres_list)
 
 tab_style = {
@@ -104,8 +105,7 @@ input = html.Div([
             options=[
                 {'label': 'IMDB', 'value': 'IMDB'},
                 {'label': 'Rotten Tomatoes', 'value': 'RT'},
-                {'label': 'Metacritic', 'value': 'MC'},
-                {'label': 'Overall', 'value': 'Overall'}
+                {'label': 'Metacritic', 'value': 'MC'}
             ],
             value='IMDB',
             style={
