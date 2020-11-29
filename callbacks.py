@@ -28,7 +28,12 @@ def generate_data_table (dataframe):
             'if': {'row_index':'odd'},
             'backgroundColor': 'lightgrey',
             'color': 'black'
-        }
+        },
+        {
+            "if": {"state": "selected"},
+            "backgroundColor": "inherit !important",
+            "border": "inherit !important",
+        } 
     ],
     style_header={
         'backgroundColor': 'rgb(30, 30, 30)',
@@ -60,6 +65,7 @@ def clean_integer(x):
     return(x)
 
 def get_about_info():
+    
     return dcc.Markdown('''
 #### Overview
 
@@ -67,7 +73,7 @@ This dashboard uses the information retrieved from different movie portals like 
 
 #### Background
 
-The data retrieval process for the dashboard is as follows:
+The data retrieval process for the dashboard (download_titles.py) is as follows:
 
 * Step 1: Retrieve information from [IMDB Dataset](https://datasets.imdbws.com/title.basics.tsv.gz)
 * Step 2: Select only movies greater than start year 2010
