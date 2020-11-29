@@ -195,35 +195,35 @@ layout = html.Div(
         dcc.Tabs(
             id="all-tabs-inline",
             className="all-tabs-inline",
-            value="tab-1",
+            value="about-tab",
             children=[
                 dcc.Tab(
                     label="About",
-                    value="tab-1",
+                    value="about-tab",
                     style=tab_style,
                     selected_style=tab_selected_style,
                 ),
                 dcc.Tab(
                     label="Top 20 movies",
-                    value="tab-2",
+                    value="top20-tab",
                     style=tab_style,
                     selected_style=tab_selected_style,
                 ),
                 dcc.Tab(
                     label="User score vs Critic score",
-                    value="tab-3",
+                    value="uservscritic-tab",
                     style=tab_style,
                     selected_style=tab_selected_style,
                 ),
                 dcc.Tab(
                     label="Plot of 20 movies",
-                    value="tab-4",
+                    value="plot-tab",
                     style=tab_style,
                     selected_style=tab_selected_style,
                 ),
                 dcc.Tab(
                     label="Results",
-                    value="tab-5",
+                    value="results-tab",
                     style=tab_style,
                     selected_style=tab_selected_style,
                 ),                
