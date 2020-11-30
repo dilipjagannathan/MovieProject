@@ -97,7 +97,8 @@ Based on the selection and input provided using release year, genres and ratings
 
 def get_top20_data_table(df, years, genres, ratings):
     if (ratings == "IMDB"):
-        filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "titleId"]]  
+        filtered_df['runtimeMinutes'] = filtered_df['runtimeMinutes'].replace('\\N','')
         filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
@@ -105,6 +106,7 @@ def get_top20_data_table(df, years, genres, ratings):
         return generate_data_table(filtered_df)
     elif (ratings == "RT"):
         filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df['runtimeMinutes'] = filtered_df['runtimeMinutes'].replace('\\N','')
         filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
@@ -112,6 +114,7 @@ def get_top20_data_table(df, years, genres, ratings):
         return generate_data_table(filtered_df)
     elif (ratings == "MC"):
         filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df['runtimeMinutes'] = filtered_df['runtimeMinutes'].replace('\\N','')        
         filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes', 'MC_critics_rating': 'Critics Ratings', 'MC_critics_count': 'Critics Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
@@ -121,19 +124,22 @@ def get_top20_data_table(df, years, genres, ratings):
     
 def get_results_data_table(df, years, genres, ratings):
     if (ratings == "IMDB"):
-        filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "titleId"]]  
+        filtered_df['runtimeMinutes'] = filtered_df['runtimeMinutes'].replace('\\N','')        
         filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         return generate_data_table(filtered_df)
     elif (ratings == "RT"):
         filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df['runtimeMinutes'] = filtered_df['runtimeMinutes'].replace('\\N','')        
         filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         return generate_data_table(filtered_df)
     elif (ratings == "MC"):
         filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count",  "runtimeMinutes", "genres", "titleId"]]   
+        filtered_df['runtimeMinutes'] = filtered_df['runtimeMinutes'].replace('\\N','')        
         filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes', 'MC_critics_rating': 'Critics Ratings', 'MC_critics_count': 'Critics Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
