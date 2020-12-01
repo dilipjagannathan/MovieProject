@@ -42,6 +42,8 @@ def generate_data_table (dataframe):
         'font-size': '26px',
     },
     style_table={'overflowX': 'scroll'}, 
+    sort_action="native",
+    sort_mode="multi",
     )
 
 #pandas dataframe to html table
