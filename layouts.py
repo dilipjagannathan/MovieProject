@@ -77,7 +77,7 @@ input = html.Div([
               min=years[0],
               max=years[-1],
               step=1,
-              value=[years[0], years[-1]],  
+              value=[years[-2], years[-1]],  
               marks = get_marks(years),
       		),
             html.H6('Genres:',
@@ -90,7 +90,7 @@ input = html.Div([
             dcc.Dropdown(
                 id='genres',
                 options=get_genres(genres_list),
-                value=genres_list,
+                value=["Action"],
                 multi=True,
                 ),
             html.H6('Ratings:',

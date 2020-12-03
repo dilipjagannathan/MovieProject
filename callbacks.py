@@ -178,7 +178,7 @@ def get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
         fig = px.bar(filtered_df, x='name', y='user_count')    
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}) 
+        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True}) 
         # fig = px.bar(x=filtered_df.name, y=filtered_df["user_count"])
       
         # return dcc.Graph(figure=fig)
@@ -191,7 +191,7 @@ def get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
         fig = px.bar(filtered_df, x='name', y='user_count')
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}) 
+        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True}) 
     elif (ratings == "MC"):
         filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "genres"]]   
         filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes'})     
@@ -201,7 +201,7 @@ def get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
         fig = px.bar(filtered_df, x='name', y='user_count')
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}) 
+        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True}) 
     
 def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
     if (ratings == "IMDB"):
@@ -213,7 +213,7 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
         fig = px.bar(filtered_df, x='name', y='user_ratings')    
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}) 
+        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True}) 
     elif (ratings == "RT"):
         filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "genres"]]   
         filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes'})     
@@ -223,7 +223,7 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
         fig = px.bar(filtered_df, x='name', y='user_ratings')
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}) 
+        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True}) 
     elif (ratings == "MC"):
         filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "genres"]]   
         filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes'})     
@@ -235,5 +235,5 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
         fig = px.bar(filtered_df, x='name', y='user_ratings')
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'})     
+        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True})     
 
