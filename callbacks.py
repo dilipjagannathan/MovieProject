@@ -159,16 +159,39 @@ def update_tab(tab, years, genres, ratings):
     years = range (years[0], years[1], 1)
     if tab == "about-tab":
         return get_about_info()
-    elif tab == "top20-tab": 
+    elif tab == "top20-tab":         
         return get_top20_data_table(df, years, genres, ratings)
     elif tab == "plotratings-tab":
-        return get_top_20_plot_based_on_user_ratings(df, years, genres, ratings)
+        return html.Div([dcc.Graph(id='figure-output', figure={}, style={'width': '90vw', 'height': '70vh'}, config={'responsive': True})])
     elif tab == "plot-tab": 
-        return get_top_20_plot_based_on_user_count(df, years, genres, ratings)
+        return html.Div([dcc.Graph(id='figure-output',figure={}, style={'width': '90vw', 'height': '70vh'}, config={'responsive': True})])
     elif tab == "results-tab":  
         return get_results_data_table(df, years, genres, ratings)
 
-def get_top_20_plot_based_on_user_count(df, years, genres, ratings):
+
+@app.callback(
+    Output(component_id='figure-output', component_property='figure'),
+    [Input(component_id='all-tabs-inline', component_property='value'),
+     Input(component_id='year-slider', component_property='value'),
+     Input(component_id='genres', component_property='value'),
+     Input(component_id='ratings', component_property='value')]
+)
+def update_figure(tab, years, genres, ratings):
+    if tab == "plotratings-tab":
+        return get_top_20_plot_based_on_user_ratings(df, years, genres, ratings)
+    elif tab == "plot-tab":
+        return get_top_20_plot_based_on_user_count(df, years, genres, ratings)
+    elif tab == "about-tab":
+        fig = {}
+        return fig
+    elif tab == "top20-tab": 
+        fig = {}
+        return fig
+    elif tab == "results-tab": 
+        fig = {}
+        return fig
+    
+def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
     if (ratings == "IMDB"):
         filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "genres"]]   
         filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    
@@ -177,11 +200,21 @@ def get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df['user_count'] = filtered_df['Votes'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
-        fig = px.bar(filtered_df, x='name', y='user_count')    
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True}) 
-        # fig = px.bar(x=filtered_df.name, y=filtered_df["user_count"])
-      
-        # return dcc.Graph(figure=fig)
+        filtered_df = filtered_df.sort_values('user_count', ascending = True)        
+        fig = px.bar(filtered_df, x='user_count', y='name', orientation='h', color="user_count", color_continuous_scale =px.colors.sequential.Blugrn,)
+        fig.update_layout(title="Top 20 movies ranked by user count",
+                          title_x=0.5,
+                      yaxis_title="Movies",
+                      xaxis_title="User count",
+                      font=dict(
+                          family="Courier New, monospace",
+                          size=18,
+                          color="RebeccaPurple"),
+                          bargap=0.25, # gap between bars of adjacent location coordinates.
+                      )
+        fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')           
+        
+        return fig 
     elif (ratings == "RT"):
         filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "genres"]]   
         filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes'})     
@@ -190,8 +223,20 @@ def get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df['user_count'] = filtered_df['User Votes'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
-        fig = px.bar(filtered_df, x='name', y='user_count')
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True}) 
+        filtered_df = filtered_df.sort_values('user_count', ascending = True)        
+        fig = px.bar(filtered_df, x='user_count', y='name', orientation='h', color="user_count", color_continuous_scale =px.colors.sequential.Blugrn,)
+        fig.update_layout(title="Top 20 movies ranked by user count",
+                          title_x=0.5,
+                      yaxis_title="Movies",
+                      xaxis_title="User count",
+                      font=dict(
+                          family="Courier New, monospace",
+                          size=18,
+                          color="RebeccaPurple"),
+                          bargap=0.25, # gap between bars of adjacent location coordinates.
+                      )   
+        fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')           
+        return fig
     elif (ratings == "MC"):
         filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "genres"]]   
         filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes'})     
@@ -200,9 +245,22 @@ def get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df['user_count'] = filtered_df['User Votes'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
-        fig = px.bar(filtered_df, x='name', y='user_count')
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True}) 
+        filtered_df = filtered_df.sort_values('user_count', ascending = True)
+        fig = px.bar(filtered_df, x='user_count', y='name', orientation='h', color="user_count", color_continuous_scale =px.colors.sequential.Blugrn,)
+        fig.update_layout(title="Top 20 movies ranked by user count",
+                          title_x=0.5,
+                          yaxis_title="Movies",
+                          xaxis_title="User count",
+                          font=dict(
+                          family="Courier New, monospace",
+                          size=18,
+                          color="RebeccaPurple"),
+                          bargap=0.25, # gap between bars of adjacent location coordinates.  
+                      )
+        fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')   
+        return fig
     
+
 def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
     if (ratings == "IMDB"):
         filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "genres"]]   
@@ -212,8 +270,20 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         filtered_df['user_ratings'] = filtered_df['Ratings'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
-        fig = px.bar(filtered_df, x='name', y='user_ratings')    
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True}) 
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = True)
+        fig = px.bar(filtered_df, x='user_ratings', y='name', orientation='h', color="user_ratings", color_continuous_scale =px.colors.sequential.Blugrn,)
+        fig.update_layout(title="Top 20 movies ranked by user ratings",
+                          title_x=0.5,
+                          yaxis_title="Movies",
+                          xaxis_title="User ratings",
+                          font=dict(
+                          family="Courier New, monospace",
+                          size=18,
+                          color="RebeccaPurple"),
+                          bargap=0.25, # gap between bars of adjacent location coordinates.   
+                      )        
+        fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')           
+        return fig
     elif (ratings == "RT"):
         filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "genres"]]   
         filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes'})     
@@ -222,8 +292,21 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         filtered_df['user_ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
-        fig = px.bar(filtered_df, x='name', y='user_ratings')
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True}) 
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = True)
+        fig = px.bar(filtered_df, x='user_ratings', y='name', orientation='h', color="user_ratings", color_continuous_scale =px.colors.sequential.Blugrn,)
+        
+        fig.update_layout(title="Top 20 movies ranked by user ratings",
+                          title_x=0.5,
+                          yaxis_title="Movies",
+                          xaxis_title="User ratings",          
+                          font=dict(
+                              family="Courier New, monospace",
+                              size=18,
+                              color="RebeccaPurple"),
+                          bargap=0.25, # gap between bars of adjacent location coordinates.
+                      )        
+        fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')           
+        return fig
     elif (ratings == "MC"):
         filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "genres"]]   
         filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes'})     
@@ -234,6 +317,18 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
-        fig = px.bar(filtered_df, x='name', y='user_ratings')
-        return dcc.Graph(figure=fig,style={'width': '90vw', 'height': '70vh'}, config={'responsive': True})     
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = True)
+        fig = px.bar(filtered_df, x='user_ratings', y='name', orientation='h', color="user_ratings", color_continuous_scale =px.colors.sequential.Blugrn,)
+        fig.update_layout(title="Top 20 movies ranked by user ratings",
+                          title_x=0.5,
+                      yaxis_title="Movies",
+                      xaxis_title="User ratings",
+                      font=dict(
+                          family="Courier New, monospace",
+                          size=18,
+                          color="RebeccaPurple"),
+                          bargap=0.25, # gap between bars of adjacent location coordinates.                     
+                      )         
+        fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')        
+        return fig    
 
