@@ -61,19 +61,6 @@ def generate_data_table (dataframe, id_name):
     sort_mode="single",
     )
 
-# pandas dataframe to html table
-def generate_table(dataframe, max_rows=100):
-    return html.Table([
-        html.Thead(
-            html.Tr([html.Th(col) for col in dataframe.columns])
-        ),
-        html.Tbody([
-            html.Tr([
-                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
-            ]) for i in range(min(len(dataframe), max_rows))
-        ])
-    ])
-
 def get_about_info():
     
     return dcc.Markdown('''
@@ -168,7 +155,7 @@ def get_results_data_table(df, years, genres, ratings):
      Input(component_id='ratings', component_property='value')]
 )
 def update_tab(tab, years, genres, ratings):
-    years = range (years[0], years[1], 1)
+    years = range (years[0], years[1] + 1, 1)
     if tab == "about-tab":
         return get_about_info()
     elif tab == "top20-tab":         
@@ -190,7 +177,7 @@ def update_tab(tab, years, genres, ratings):
      Input(component_id='ratings', component_property='value')]
 )
 def update_figure(tab, years, genres, ratings):
-    years = range (years[0], years[1], 1)
+    years = range (years[0], years[1] + 1, 1)
     if tab == "plotratings-tab":
         fig = get_top_20_plot_based_on_user_ratings(df, years, genres, ratings)
         style = {'display':'block', 'width': '90vw', 'height': '70vh'}
