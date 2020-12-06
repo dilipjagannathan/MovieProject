@@ -203,6 +203,7 @@ def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df['user_count'] = filtered_df['Votes']
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
+        filtered_df = filtered_df.sort_values('user_count', ascending = True)
   
         fig = px.bar(filtered_df, x='user_count', y='name', orientation='h', color="user_count", color_continuous_scale =px.colors.sequential.Blugrn,)
         fig.update_layout(title="Top 20 movies ranked by user count",
@@ -226,6 +227,7 @@ def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df['user_count'] = filtered_df['User Votes']
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
+        filtered_df = filtered_df.sort_values('user_count', ascending = True)
     
         fig = px.bar(filtered_df, x='user_count', y='name', orientation='h', color="user_count", color_continuous_scale =px.colors.sequential.Blugrn,)
         fig.update_layout(title="Top 20 movies ranked by user count",
@@ -248,6 +250,7 @@ def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df['user_count'] = filtered_df['User Votes']
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
+        filtered_df = filtered_df.sort_values('user_count', ascending = True)
         fig = px.bar(filtered_df, x='user_count', y='name', orientation='h', color="user_count", color_continuous_scale =px.colors.sequential.Blugrn,)
         fig.update_layout(title="Top 20 movies ranked by user count",
                           title_x=0.5,
@@ -272,6 +275,7 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         filtered_df['user_ratings'] = filtered_df['Ratings'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = True)
         fig = px.bar(filtered_df, x='user_ratings', y='name', orientation='h', color="user_ratings", color_continuous_scale =px.colors.sequential.Blugrn,)
         fig.update_layout(title="Top 20 movies ranked by user ratings",
                           title_x=0.5,
@@ -293,6 +297,7 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         filtered_df['user_ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = True)
         fig = px.bar(filtered_df, x='user_ratings', y='name', orientation='h', color="user_ratings", color_continuous_scale =px.colors.sequential.Blugrn,)
         
         fig.update_layout(title="Top 20 movies ranked by user ratings",
@@ -317,6 +322,7 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = True)
         fig = px.bar(filtered_df, x='user_ratings', y='name', orientation='h', color="user_ratings", color_continuous_scale =px.colors.sequential.Blugrn,)
         fig.update_layout(title="Top 20 movies ranked by user ratings",
                           title_x=0.5,
