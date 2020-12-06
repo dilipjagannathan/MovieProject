@@ -13,24 +13,6 @@ import dash_table
 from app import app
 import dash_core_components as dcc
 import plotly.express as px
-import logging
-
-logger = logging.getLogger(__name__)
-# Create handlers
-c_handler = logging.StreamHandler('sys.stdout')
-f_handler = logging.FileHandler('app.log')
-c_handler.setLevel(logging.INFO)
-f_handler.setLevel(logging.INFO)
-
-# Create formatters and add it to handlers
-c_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
-f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-c_handler.setFormatter(c_format)
-f_handler.setFormatter(f_format)
-
-# Add handlers to the logger
-logger.addHandler(c_handler)
-logger.addHandler(f_handler)
 
 def clean_integer(x):
     """ If the value is a string, then remove currency symbol and delimiters
@@ -122,9 +104,6 @@ Based on the selection and input provided using release year, genres and ratings
             style={"textAlign": "left", 'color':'white',},)
 
 def get_top20_data_table(df, years, genres, ratings):
-    logger.info(years)
-    logger.info(genres)
-    logger.info(ratings)
     if (ratings == "IMDB"):
         filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "titleId"]]  
         filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    
