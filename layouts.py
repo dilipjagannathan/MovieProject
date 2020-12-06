@@ -13,7 +13,7 @@ from datetime import date
 import json
 
 file_path = os.getcwd()
-df = pd.read_csv(file_path+os.sep+'output_df.csv', index_col=0, parse_dates=True)
+df = pd.read_csv(file_path+os.sep+'output_df.csv', index_col=0, parse_dates=True, low_memory=False)
 
 years = df.year.unique()
 current_year = date.today().year
