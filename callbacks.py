@@ -24,7 +24,7 @@ def clean_integer(x):
 
 file_path = os.getcwd()
 df = pd.read_csv(file_path+os.sep+'output_df.csv', index_col=0, parse_dates=True)
-df['runtimeMinutes'] = df['runtimeMinutes'].replace('\\N','').astype(float)   
+df['runtimeMinutes'] = df['runtimeMinutes'].replace('\\N','')
 df['IMDB_votes'] = df['IMDB_votes'].apply(clean_integer).astype(float)
 df['MC_users_count'] = df['MC_users_count'].apply(clean_integer).astype(float)
 df['MC_critics_count'] = df['MC_critics_count'].apply(clean_integer).astype(float)
