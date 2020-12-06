@@ -98,18 +98,18 @@ def get_top20_data_table(df, years, genres, ratings):
         filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
-        filtered_df['Ratings'] = filtered_df['Ratings'].apply(clean_integer).astype(float)
-        filtered_df = filtered_df[~pd.isnull(filtered_df.Ratings)]
-        filtered_df = filtered_df.sort_values('Ratings', ascending = False).head(20)
+        filtered_df['user_ratings'] = filtered_df['Ratings'].apply(clean_integer).astype(float)
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
         return generate_data_table(filtered_df, 'top_20_table')
     elif (ratings == "RT"):
         filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "runtimeMinutes", "genres", "titleId"]]   
         filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
-        filtered_df['User Ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
-        filtered_df = filtered_df[~pd.isnull(filtered_df['User Ratings'])]
-        filtered_df = filtered_df.sort_values('User Ratings', ascending = False).head(20)
+        filtered_df['user_ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
+        filtered_df = filtered_df[~pd.isnull(filtered_df['user_ratings'])]
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
         return generate_data_table(filtered_df, 'top_20_table')
     elif (ratings == "MC"):
         filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count", "runtimeMinutes", "genres", "titleId"]]      
@@ -117,10 +117,10 @@ def get_top20_data_table(df, years, genres, ratings):
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df = filtered_df[~filtered_df['User Ratings'].isin(['tbd'])]
-        filtered_df['User Ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
-        filtered_df = filtered_df[~pd.isnull(filtered_df['User Ratings'])]
-        filtered_df = filtered_df.sort_values('User Ratings', ascending = False).head(20)
-        return generate_data_table(filtered_df, 'top_20_table')    
+        filtered_df['user_ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
+        filtered_df = filtered_df[~pd.isnull(filtered_df['user_ratings'])]
+        filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
+        return generate_data_table(filtered_df, 'top_20_table') 
     
 def get_results_data_table(df, years, genres, ratings):
     if (ratings == "IMDB"):
