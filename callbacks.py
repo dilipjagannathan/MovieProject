@@ -162,12 +162,11 @@ def update_tab(tab, years, genres, ratings):
     elif tab == "top20-tab":         
         return get_top20_data_table(df, years, genres, ratings)
     elif tab == "plotratings-tab":
-        return html.Div([dcc.Graph(id='figure-output', figure={}, style={'width': '90vw', 'height': '70vh'}, config={'responsive': True})])
+        return html.Div([dcc.Graph(id='figure-output', figure={}, style={'display':'none'}, config={'responsive': True})])
     elif tab == "plot-tab": 
-        return html.Div([dcc.Graph(id='figure-output',figure={}, style={'width': '90vw', 'height': '70vh'}, config={'responsive': True})])
+        return html.Div([dcc.Graph(id='figure-output',figure={}, style={'display':'none'}, config={'responsive': True})])
     elif tab == "results-tab":  
         return get_results_data_table(df, years, genres, ratings)
-
 
 @app.callback(
     [
@@ -181,11 +180,11 @@ def update_tab(tab, years, genres, ratings):
 def update_figure(tab, years, genres, ratings):
     if tab == "plotratings-tab":
         fig = get_top_20_plot_based_on_user_ratings(df, years, genres, ratings)
-        style = {'display':'block'}
+        style = {'display':'block', 'width': '90vw', 'height': '70vh'}
         return fig, style
     elif tab == "plot-tab":
         fig = get_top_20_plot_based_on_user_count(df, years, genres, ratings)
-        style = {'display':'block'}
+        style = {'display':'block', 'width': '90vw', 'height': '70vh'}
         return fig, style
     elif tab == "about-tab":
         fig = {}
