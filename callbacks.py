@@ -13,6 +13,24 @@ import dash_table
 from app import app
 import dash_core_components as dcc
 import plotly.express as px
+import logging
+
+logger = logging.getLogger(__name__)
+# Create handlers
+c_handler = logging.StreamHandler('sys.stdout')
+f_handler = logging.FileHandler('app.log')
+c_handler.setLevel(logging.INFO)
+f_handler.setLevel(logging.INFO)
+
+# Create formatters and add it to handlers
+c_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+f_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+c_handler.setFormatter(c_format)
+f_handler.setFormatter(f_format)
+
+# Add handlers to the logger
+logger.addHandler(c_handler)
+logger.addHandler(f_handler)
 
 def clean_integer(x):
     """ If the value is a string, then remove currency symbol and delimiters
@@ -35,8 +53,8 @@ def generate_data_table (dataframe, id_name):
     return dash_table.DataTable(
     id=id_name,
     columns=[{"name": i, "id": i} for i in dataframe.columns],
-    data=dataframe.to_dict('records'),
-    style_cell={'textAlign': 'left', 'font-size': '14px',},
+    data=[],
+    style_cell={'textAlign': 'left', 'fontSize': '14px',},
     style_data_conditional=[
         {
             'if': {'row_index':'odd'},
@@ -53,14 +71,25 @@ def generate_data_table (dataframe, id_name):
         'backgroundColor': 'rgb(30, 30, 30)',
         'color': 'white',
         'fontWeight': 'bold',
-        'font-size': '26px',
+        'fontSize': '26px',
     },
     style_table={'overflowX': 'scroll'}, 
     sort_action="native",
     sort_mode="single",
     )
 
-
+# pandas dataframe to html table
+def generate_table(dataframe, max_rows=100):
+    return html.Table([
+        html.Thead(
+            html.Tr([html.Th(col) for col in dataframe.columns])
+        ),
+        html.Tbody([
+            html.Tr([
+                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
+            ]) for i in range(min(len(dataframe), max_rows))
+        ])
+    ])
 def get_about_info():
     
     return dcc.Markdown('''
@@ -93,6 +122,9 @@ Based on the selection and input provided using release year, genres and ratings
             style={"textAlign": "left", 'color':'white',},)
 
 def get_top20_data_table(df, years, genres, ratings):
+    logger.info(years)
+    logger.info(genres)
+    logger.info(ratings)
     if (ratings == "IMDB"):
         filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "titleId"]]  
         filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    

@@ -27,7 +27,7 @@ tab_style = {
     "borderBottom": "1px solid #d6d6d6",
     "padding": "2px",
     "fontWeight": "bold",
-    "vertical-align": "middle",
+    "verticalAlign": "middle",
 }
 
 tab_selected_style = {
@@ -36,7 +36,7 @@ tab_selected_style = {
     "backgroundColor": "black",
     "color": "white",
     "padding": "10px",
-    "font-size": 20,
+    "fontSize": 20,
 }
 
 def get_marks(years):
@@ -69,7 +69,7 @@ input = html.Div([
                                   "display": "inline-block",
                                   "margin": "0px",
                                   "color": "white",
-                                  "line-height": "0.1",
+                                  "lineHeight": "0.1",
                               },),
 
       		dcc.RangeSlider(
@@ -85,7 +85,7 @@ input = html.Div([
                               "display": "inline-block",
                               "margin": "0px",
                               "color": "white",
-                              "line-height": "0.1",
+                              "lineHeight": "0.1",
                           },),
             dcc.Dropdown(
                 id='genres',
@@ -98,7 +98,7 @@ input = html.Div([
                               "display": "inline-block",
                               "margin": "0px",
                               "color": "white",
-                              "line-height": "0.1",
+                              "lineHeight": "0.1",
                           },),     
         dcc.RadioItems(
             id='ratings',
@@ -112,7 +112,7 @@ input = html.Div([
                 "display": "inline-block",
                 "margin": "0px",
                 "color": "white",
-                "line-height": "0.1",
+                "lineHeight": "0.1",
             },
         labelStyle={'display': 'inline-block'})
                       
@@ -131,7 +131,7 @@ footer = html.Div(
                                 "display": "inline-block",
                                 "margin": "0px",
                                 "color": "white",
-                                "line-height": "0.1",
+                                "lineHeight": "0.1",
                             },
                         ),
                         html.A(
@@ -142,12 +142,12 @@ footer = html.Div(
                                     "height": "10%",
                                     "width": "3.75%",
                                     "display": "inline-block",
-                                    "border-radius": "50%",
+                                    "borderRadius": "50%",
                                     "margin": "10px",
                                 },
                             ),
                             href="https://www.linkedin.com/in/dilip-j-1506bb3/",
-                            style={"vertical-align": "middle"},
+                            style={"verticalAlign": "middle"},
                         ),
                     ],
                 ),
@@ -157,7 +157,7 @@ footer = html.Div(
                         "display": "inline-block",
                         "margin": "0px",
                         "color": "white",
-                        "line-height": "0.1",
+                        "lineHeight": "0.1",
                     },
                 ),
                 html.A(
@@ -173,7 +173,7 @@ footer = html.Div(
                     ),
                     href="https://github.com/dilipjagannathan/MovieProject",
                     className="git-code",
-                    style={"vertical-align": "middle"},
+                    style={"verticalAlign": "middle"},
                 ),
             ],
         ),
