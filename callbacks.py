@@ -170,7 +170,9 @@ def update_tab(tab, years, genres, ratings):
 
 
 @app.callback(
+    [
     Output(component_id='figure-output', component_property='figure'),
+    Output(component_id='figure-output', component_property='style')],
     [Input(component_id='all-tabs-inline', component_property='value'),
      Input(component_id='year-slider', component_property='value'),
      Input(component_id='genres', component_property='value'),
@@ -178,18 +180,25 @@ def update_tab(tab, years, genres, ratings):
 )
 def update_figure(tab, years, genres, ratings):
     if tab == "plotratings-tab":
-        return get_top_20_plot_based_on_user_ratings(df, years, genres, ratings)
+        fig = get_top_20_plot_based_on_user_ratings(df, years, genres, ratings)
+        style = {'display':'block'}
+        return fig, style
     elif tab == "plot-tab":
-        return get_top_20_plot_based_on_user_count(df, years, genres, ratings)
+        fig = get_top_20_plot_based_on_user_count(df, years, genres, ratings)
+        style = {'display':'block'}
+        return fig, style
     elif tab == "about-tab":
         fig = {}
-        return fig
+        style = {'display':'none'}
+        return fig, style
     elif tab == "top20-tab": 
         fig = {}
-        return fig
+        style = {'display':'none'}
+        return fig, style
     elif tab == "results-tab": 
         fig = {}
-        return fig
+        style = {'display':'none'}
+        return fig, style
     
 def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
     if (ratings == "IMDB"):
