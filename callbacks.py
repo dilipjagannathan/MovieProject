@@ -53,7 +53,7 @@ def generate_data_table (dataframe, id_name):
     return dash_table.DataTable(
     id=id_name,
     columns=[{"name": i, "id": i} for i in dataframe.columns],
-    data=[],
+    data=dataframe.to_dict('records'),
     style_cell={'textAlign': 'left', 'fontSize': '14px',},
     style_data_conditional=[
         {
