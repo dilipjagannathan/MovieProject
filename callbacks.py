@@ -194,6 +194,7 @@ def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
+        filtered_df['user_count'] = filtered_df['Votes']
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
         filtered_df = filtered_df.sort_values('user_count', ascending = True)        
@@ -216,6 +217,7 @@ def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
+        filtered_df['user_count'] = filtered_df['User Votes']
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
         filtered_df = filtered_df.sort_values('user_count', ascending = True)        
@@ -237,6 +239,7 @@ def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
         filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
+        filtered_df['user_count'] = filtered_df['User Votes']
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]
         filtered_df = filtered_df.sort_values('user_count', ascending = False).head(20)
         filtered_df = filtered_df.sort_values('user_count', ascending = True)
