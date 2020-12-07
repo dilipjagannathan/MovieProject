@@ -6,14 +6,28 @@ Created on Sat Nov 28 18:39:52 2020
 """
 import pandas as pd
 import os
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 import dash
 import dash_table
 from app import app
 import dash_core_components as dcc
 import plotly.express as px
+import logging
+import logging.handlers
+import time
 
+log_handler = logging.handlers.RotatingFileHandler('app.log', maxBytes=1000000, backupCount=100)
+formatter = logging.Formatter(
+    '%(asctime)s program_name [%(process)d]: %(message)s',
+    '%b %d %H:%M:%S')
+formatter.converter = time.gmtime  # if you want UTC time
+log_handler.setFormatter(formatter)
+logger = logging.getLogger()
+logger.addHandler(log_handler)
+logger.setLevel(logging.DEBUG)
+    
 def clean_integer(x):
     """ If the value is a string, then remove currency symbol and delimiters
     otherwise, the value is numeric and can be converted
@@ -32,34 +46,70 @@ df['MC_critics_count'] = df['MC_critics_count'].apply(clean_integer).astype(floa
 df['RT_users_count'] = df['RT_users_count'].apply(clean_integer).astype(float)
 df['RT_critics_count'] = df['RT_critics_count'].apply(clean_integer).astype(float)
 
-def generate_data_table (dataframe, id_name):
-    return dash_table.DataTable(
-    id=id_name,
-    columns=[{"name": i, "id": i} for i in dataframe.columns],
-    data=dataframe.to_dict('records'),
-    style_cell={'textAlign': 'left', 'fontSize': '14px',},
-    style_data_conditional=[
-        {
-            'if': {'row_index':'odd'},
-            'backgroundColor': 'lightgrey',
-            'color': 'black'
+def generate_data_table (dataframe, id_name, selectable=False):
+    if selectable:
+        return dash_table.DataTable(
+        id=id_name,
+        columns=[{"name": i, "id": i} for i in dataframe.columns],
+        data=dataframe.to_dict('records'),
+        style_cell={'textAlign': 'center', 'fontSize': '10px',},
+        style_data_conditional=[
+            {
+                'if': {'row_index':'odd'},
+                'backgroundColor': 'lightgrey',
+                'color': 'black'
+            },
+            {
+                "if": {"state": "selected"},
+                "backgroundColor": "inherit !important",
+                "border": "inherit !important",
+            } 
+        ],
+        style_header={
+            'backgroundColor': 'rgb(30, 30, 30)',
+            'color': 'white',
+            'fontWeight': 'bold',
+            'fontSize': '14px',
+        },        
+        style_table={'overflowX': 'scroll',                 
+                     'marginLeft': 'auto',
+                     'marginRight': 'auto',
+                     'paddingLeft': '10px',
+                     'backgroundColor': '#ffffff'
+        }, 
+        sort_action="native",
+        sort_mode="single",
+        row_selectable='single',
+        selected_row_ids=[],
+        )
+    else:
+        return dash_table.DataTable(
+        id=id_name,
+        columns=[{"name": i, "id": i} for i in dataframe.columns],
+        data=dataframe.to_dict('records'),
+        style_cell={'textAlign': 'center', 'fontSize': '10px',},
+        style_data_conditional=[
+            {
+                'if': {'row_index':'odd'},
+                'backgroundColor': 'lightgrey',
+                'color': 'black'
+            },
+            {
+                "if": {"state": "selected"},
+                "backgroundColor": "inherit !important",
+                "border": "inherit !important",
+            } 
+        ],
+        style_header={
+            'backgroundColor': 'rgb(30, 30, 30)',
+            'color': 'white',
+            'fontWeight': 'bold',
+            'fontSize': '14px',
         },
-        {
-            "if": {"state": "selected"},
-            "backgroundColor": "inherit !important",
-            "border": "inherit !important",
-        } 
-    ],
-    style_header={
-        'backgroundColor': 'rgb(30, 30, 30)',
-        'color': 'white',
-        'fontWeight': 'bold',
-        'fontSize': '26px',
-    },
-    style_table={'overflowX': 'scroll'}, 
-    sort_action="native",
-    sort_mode="single",
-    )
+        style_table={'overflowX': 'scroll'}, 
+        sort_action="native",
+        sort_mode="single",
+        )
 
 def get_about_info():
     
@@ -84,7 +134,7 @@ The data retrieval process for the dashboard (download_titles.py) is as follows:
 #### Dashboard features
 Based on the selection and input provided using release year, genres and ratings:
     
-* Top 20 movies tab displays the top 20 movies 
+* Top 20 movies tab displays the top 20 movies. Also, if a row is selected, the movie details is displayed at the bottom of the page
 * Plot of 20 movies by user ratings tab displays the bar plot based on user ratings
 * Plot of 20 movies by user count tab displays the bar plot based on number of user votes
 * Results tab displays all results
@@ -96,27 +146,27 @@ def get_top20_data_table(df, years, genres, ratings):
 
     if (ratings == "IMDB"):
         filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]  
-        filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    
+        filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes', 'name': "Movie Name"})    
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df['Ratings'] = filtered_df['Ratings'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df.Ratings)]
         filtered_df = filtered_df.sort_values('Ratings', ascending = False).head(20)
 
-        return generate_data_table(filtered_df, 'top_20_table')
+        return html.Div([generate_data_table(filtered_df, 'top_20_table', True), html.Div(id="movie-details")])
     elif (ratings == "RT"):
         filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]   
-        filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes'})     
+        filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes', 'name': "Movie Name"})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df['User Ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df['User Ratings'])]
         filtered_df = filtered_df.sort_values('User Ratings', ascending = False).head(20)
 
-        return generate_data_table(filtered_df, 'top_20_table')
+        return html.Div([generate_data_table(filtered_df, 'top_20_table', True), html.Div(id="movie-details")])
     elif (ratings == "MC"):
         filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]      
-        filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes', 'MC_critics_rating': 'Critics Ratings', 'MC_critics_count': 'Critics Votes'})     
+        filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes', 'MC_critics_rating': 'Critics Ratings', 'MC_critics_count': 'Critics Votes', 'name': "Movie Name"})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df = filtered_df[~filtered_df['User Ratings'].isin(['tbd'])]
@@ -124,8 +174,102 @@ def get_top20_data_table(df, years, genres, ratings):
         filtered_df = filtered_df[~pd.isnull(filtered_df['User Ratings'])]
         filtered_df = filtered_df.sort_values('User Ratings', ascending = False).head(20)
 
-        return generate_data_table(filtered_df, 'top_20_table') 
-    
+        return html.Div([generate_data_table(filtered_df, 'top_20_table', True), html.Div(id="movie-details")])
+
+@app.callback(Output('movie-details', 'children'),
+             Input('top_20_table', 'selected_rows'),
+             Input('top_20_table', 'data')
+              )
+def save_current_table(selected_rows, rows):
+    layout = []
+    if selected_rows is not None:
+        logger.info (selected_rows[0])
+        
+    table_df = pd.DataFrame(rows) #convert current rows into df
+
+    if selected_rows:
+        table_df = table_df.loc[selected_rows] #filter according to selected rows
+        
+        row = table_df.iloc[0]
+        
+        filtered_row = df[df.titleId==row.titleId]
+        filtered_row = filtered_row.iloc[0]
+        layout = html.Div(
+        [
+            dbc.Row(
+                dbc.Col(
+                    html.H1("Movie Details",
+                                style={
+                                    "color": "white",
+                                    "textAlign":"center"
+                                    #"background": "yellow"
+                                }
+        )
+            )),
+            dbc.Row(
+                dbc.Col(
+                html.Img(
+                    src=filtered_row.poster)
+            
+                )
+            ),            
+            dbc.Row(
+                dbc.Col(
+                    html.Br())),            
+            dbc.Row(
+            [
+                dbc.Col(html.H3("Movie Name: "),
+                                style={
+                                    "color": "white",
+                                    #"background": "yellow"
+                                }, width="auto"),
+                dbc.Col(html.H3(row["Movie Name"]),
+                                style={
+                                    "color": "white",
+                                    #"background": "yellow"
+                                }, width="auto")
+                ],
+            justify="left"
+        ),
+            dbc.Row(
+            [
+                dbc.Col(html.H3("Release Year: "),
+                                style={
+                                    "color": "white",
+                                    #"background": "yellow"
+                                }, width="auto"),
+                dbc.Col(html.H3(row.year),
+                                style={
+                                    "color": "white",
+                                    #"background": "yellow"
+                                }, width="auto")
+                ],
+            justify="left"
+        ),
+        dbc.Row(
+            [
+                dbc.Col(html.H3("Plot: "),
+                                style={
+                                    "color": "white",
+                                    #"background": "yellow"
+                                }, width="auto"),
+                dbc.Col(html.H3(filtered_row.summary.strip()),
+                                style={
+                                    "color": "white",
+                                    #"background": "yellow"
+                                }, width="auto")
+                ],
+            justify="left"
+        ),            
+            dbc.Row(
+                dbc.Col(
+                    html.Br())),     
+        ]
+    )
+        
+
+    return layout
+  
 def get_results_data_table(df, years, genres, ratings):
     if (ratings == "IMDB"):
         filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]     
