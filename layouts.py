@@ -28,6 +28,7 @@ tab_style = {
     "padding": "2px",
     "fontWeight": "bold",
     "verticalAlign": "middle",
+    "fontSize": 14,
 }
 
 tab_selected_style = {
