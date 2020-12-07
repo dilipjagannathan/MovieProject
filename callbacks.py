@@ -52,7 +52,7 @@ def generate_data_table (dataframe, id_name, selectable=False):
         id=id_name,
         columns=[{"name": i, "id": i} for i in dataframe.columns],
         data=dataframe.to_dict('records'),
-        style_cell={'textAlign': 'center', 'fontSize': '14px',},
+        style_cell={'textAlign': 'center', 'fontSize': '12px',},
         style_data_conditional=[
             {
                 'if': {'row_index':'odd'},
@@ -87,7 +87,7 @@ def generate_data_table (dataframe, id_name, selectable=False):
         id=id_name,
         columns=[{"name": i, "id": i} for i in dataframe.columns],
         data=dataframe.to_dict('records'),
-        style_cell={'textAlign': 'center', 'fontSize': '14px',},
+        style_cell={'textAlign': 'center', 'fontSize': '12px',},
         style_data_conditional=[
             {
                 'if': {'row_index':'odd'},
