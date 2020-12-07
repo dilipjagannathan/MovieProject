@@ -361,7 +361,7 @@ def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
                       xaxis_title="User count",
                       font=dict(
                           family="Courier New, monospace",
-                          size=18,
+                          size=10,
                           color="RebeccaPurple"),
                           bargap=0.25, # gap between bars of adjacent location coordinates.
                       )
@@ -385,7 +385,7 @@ def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
                       xaxis_title="User count",
                       font=dict(
                           family="Courier New, monospace",
-                          size=18,
+                          size=10,
                           color="RebeccaPurple"),
                           bargap=0.25, # gap between bars of adjacent location coordinates.
                       )   
@@ -407,7 +407,7 @@ def   get_top_20_plot_based_on_user_count(df, years, genres, ratings):
                           xaxis_title="User count",
                           font=dict(
                           family="Courier New, monospace",
-                          size=18,
+                          size=10,
                           color="RebeccaPurple"),
                           bargap=0.25, # gap between bars of adjacent location coordinates.  
                       )
@@ -434,7 +434,7 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
                           xaxis_title="User ratings",
                           font=dict(
                           family="Courier New, monospace",
-                          size=18,
+                          size=10,
                           color="RebeccaPurple"),
                           bargap=0.25, # gap between bars of adjacent location coordinates.   
                       )        
@@ -458,7 +458,7 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
                           xaxis_title="User ratings",          
                           font=dict(
                               family="Courier New, monospace",
-                              size=18,
+                              size=10,
                               color="RebeccaPurple"),
                           bargap=0.25, # gap between bars of adjacent location coordinates.
                       )        
@@ -483,7 +483,7 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
                       xaxis_title="User ratings",
                       font=dict(
                           family="Courier New, monospace",
-                          size=18,
+                          size=10,
                           color="RebeccaPurple"),
                           bargap=0.25, # gap between bars of adjacent location coordinates.                     
                       )         
