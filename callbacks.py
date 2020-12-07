@@ -106,7 +106,12 @@ def generate_data_table (dataframe, id_name, selectable=False):
             'fontWeight': 'bold',
             'fontSize': '14px',
         },
-        style_table={'overflowX': 'scroll'}, 
+        style_table={'overflowX': 'scroll',                 
+                     'marginLeft': 'auto',
+                     'marginRight': 'auto',
+                     'paddingLeft': '10px',
+                     'backgroundColor': '#ffffff'
+        }, 
         sort_action="native",
         sort_mode="single",
         )
