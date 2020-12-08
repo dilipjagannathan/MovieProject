@@ -171,14 +171,14 @@ def get_top20_data_table(df, years, genres, ratings):
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df['User Ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
-        filtered_df = filtered_df[~pd.isnull(filtered_df['User Ratings'])]
-        filtered_df = filtered_df.sort_values('User Ratings', ascending = False).head(20)
+
         filtered_df['user_count'] = filtered_df['Votes']
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]      
         filtered_df = filtered_df[filtered_df.user_count > 10000]
         del filtered_df['user_count']
         del filtered_df['Votes']
-
+        filtered_df = filtered_df[~pd.isnull(filtered_df['User Ratings'])]
+        filtered_df = filtered_df.sort_values('User Ratings', ascending = False).head(20)
         return html.Div([generate_data_table(filtered_df, 'top_20_table', True), html.Div(id="movie-details")])
     elif (ratings == "MC"):
         filtered_df = df[["name", "year", "IMDB_votes",   "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count", "runtimeMinutes", "genres",  "IMDB_link"]]      
@@ -187,13 +187,14 @@ def get_top20_data_table(df, years, genres, ratings):
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df = filtered_df[~filtered_df['User Ratings'].isin(['tbd'])]
         filtered_df['User Ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
-        filtered_df = filtered_df[~pd.isnull(filtered_df['User Ratings'])]
-        filtered_df = filtered_df.sort_values('User Ratings', ascending = False).head(20)
+
         filtered_df['user_count'] = filtered_df['Votes']
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]      
         filtered_df = filtered_df[filtered_df.user_count > 10000]
         del filtered_df['user_count']
         del filtered_df['Votes']
+        filtered_df = filtered_df[~pd.isnull(filtered_df['User Ratings'])]
+        filtered_df = filtered_df.sort_values('User Ratings', ascending = False).head(20)
         return html.Div([generate_data_table(filtered_df, 'top_20_table', True), html.Div(id="movie-details")])
 
 @app.callback(Output('movie-details', 'children'),
@@ -320,7 +321,7 @@ def get_results_data_table(df, years, genres, ratings):
      Input(component_id='ratings', component_property='value')]
 )
 def update_tab(tab, years, genres, ratings):
-    years = range (years[0], years[1] + 1, 1)
+    years = list(range (years[0], years[1] + 1, 1))
     if tab == "about-tab":
         return get_about_info()
     elif tab == "top20-tab":         
@@ -342,7 +343,7 @@ def update_tab(tab, years, genres, ratings):
      Input(component_id='ratings', component_property='value')]
 )
 def update_figure(tab, years, genres, ratings):
-    years = range (years[0], years[1] + 1, 1)
+    years = list(range (years[0], years[1] + 1, 1))
     if tab == "plotratings-tab":
         fig = get_top_20_plot_based_on_user_ratings(df, years, genres, ratings)
         style = {'display':'block', 'width': '90vw', 'height': '70vh'}
