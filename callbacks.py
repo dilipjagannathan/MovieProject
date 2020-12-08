@@ -139,8 +139,9 @@ The data retrieval process for the dashboard (download_titles.py) is as follows:
 #### Dashboard features
 Based on the selection and input provided using release year, genres and ratings:
     
-* Top 20 movies tab displays the top 20 movies. Also, if a row is selected, the movie details is displayed at the bottom of the page
-* Plot of 20 movies by user ratings tab displays the bar plot based on user ratings
+* Top 20 movies tab displays the top 20 movies based on user ratings (min IMDb votes > 10000)
+    * Also, if a row is selected, the movie details is displayed at the bottom of the page
+* Plot of 20 movies by user ratings tab displays the bar plot based on user ratings (min IMDb votes > 10000)
 * Plot of 20 movies by user count tab displays the bar plot based on number of user votes
 * Results tab displays all results
 
@@ -150,35 +151,49 @@ Based on the selection and input provided using release year, genres and ratings
 def get_top20_data_table(df, years, genres, ratings):
 
     if (ratings == "IMDB"):
-        filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]  
+        filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "IMDB_link"]]  
         filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes', 'name': "Movie Name"})    
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df['Ratings'] = filtered_df['Ratings'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df.Ratings)]
+        filtered_df['user_count'] = filtered_df['Votes']
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]      
+        filtered_df = filtered_df[filtered_df.user_count > 10000]
+        del filtered_df['user_count']
+
         filtered_df = filtered_df.sort_values('Ratings', ascending = False).head(20)
 
         return html.Div([generate_data_table(filtered_df, 'top_20_table', True), html.Div(id="movie-details")])
     elif (ratings == "RT"):
-        filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]   
-        filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes', 'name': "Movie Name"})     
+        filtered_df = df[["name", "year", "IMDB_votes",  "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]   
+        filtered_df = filtered_df.rename(columns={'IMDB_votes': 'Votes','RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes', 'name': "Movie Name"})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df['User Ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df['User Ratings'])]
         filtered_df = filtered_df.sort_values('User Ratings', ascending = False).head(20)
+        filtered_df['user_count'] = filtered_df['Votes']
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]      
+        filtered_df = filtered_df[filtered_df.user_count > 10000]
+        del filtered_df['user_count']
+        del filtered_df['Votes']
 
         return html.Div([generate_data_table(filtered_df, 'top_20_table', True), html.Div(id="movie-details")])
     elif (ratings == "MC"):
-        filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]      
-        filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes', 'MC_critics_rating': 'Critics Ratings', 'MC_critics_count': 'Critics Votes', 'name': "Movie Name"})     
+        filtered_df = df[["name", "year", "IMDB_votes",   "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count", "runtimeMinutes", "genres",  "IMDB_link"]]      
+        filtered_df = filtered_df.rename(columns={'IMDB_votes': 'Votes', 'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes', 'MC_critics_rating': 'Critics Ratings', 'MC_critics_count': 'Critics Votes', 'name': "Movie Name"})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df = filtered_df[~filtered_df['User Ratings'].isin(['tbd'])]
         filtered_df['User Ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df['User Ratings'])]
         filtered_df = filtered_df.sort_values('User Ratings', ascending = False).head(20)
-
+        filtered_df['user_count'] = filtered_df['Votes']
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]      
+        filtered_df = filtered_df[filtered_df.user_count > 10000]
+        del filtered_df['user_count']
+        del filtered_df['Votes']
         return html.Div([generate_data_table(filtered_df, 'top_20_table', True), html.Div(id="movie-details")])
 
 @app.callback(Output('movie-details', 'children'),
@@ -196,8 +211,9 @@ def save_current_table(selected_rows, rows):
         table_df = table_df.loc[selected_rows] #filter according to selected rows
         
         row = table_df.iloc[0]
+        title = row.IMDB_link.split("/")[-1:]
         
-        filtered_row = df[df.titleId==row.titleId]
+        filtered_row = df[df.titleId==title[0]]
         filtered_row = filtered_row.iloc[0]
         layout = html.Div(
         [
@@ -277,19 +293,19 @@ def save_current_table(selected_rows, rows):
   
 def get_results_data_table(df, years, genres, ratings):
     if (ratings == "IMDB"):
-        filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]     
+        filtered_df = df[["name", "year", "IMDB_rating", "IMDB_votes", "runtimeMinutes", "genres", "IMDB_link"]]     
         filtered_df = filtered_df.rename(columns={'IMDB_rating': 'Ratings', 'IMDB_votes': 'Votes'})    
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         return generate_data_table(filtered_df, 'results_table')
     elif (ratings == "RT"):
-        filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]       
+        filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "runtimeMinutes", "genres", "IMDB_link"]]       
         filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         return generate_data_table(filtered_df, 'results_table')
     elif (ratings == "MC"):
-        filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count",  "runtimeMinutes", "genres", "titleId", "IMDB_link"]]   
+        filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "MC_critics_rating", "MC_critics_count",  "runtimeMinutes", "genres", "IMDB_link"]]   
         filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes', 'MC_critics_rating': 'Critics Ratings', 'MC_critics_count': 'Critics Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
@@ -429,9 +445,15 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df['user_ratings'] = filtered_df['Ratings'].apply(clean_integer).astype(float)
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
+        filtered_df['user_count'] = filtered_df['Votes']
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]      
+        filtered_df = filtered_df[filtered_df.user_count > 10000]
+        del filtered_df['user_count']
+        del filtered_df['Votes']         
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
 
         filtered_df = filtered_df.sort_values('user_ratings', ascending = True)
+       
         fig = px.bar(filtered_df, x='user_ratings', y='name', orientation='h', color="user_ratings", color_continuous_scale =px.colors.sequential.Blugrn,)
         fig.update_layout(title="Top 20 movies ranked by user ratings",
                           title_x=0.5,
@@ -446,11 +468,16 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')           
         return fig
     elif (ratings == "RT"):
-        filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "genres"]]   
-        filtered_df = filtered_df.rename(columns={'RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes'})     
+        filtered_df = df[["name", "year", "RT_users_rating", "RT_users_count", "IMDB_votes", "genres"]]   
+        filtered_df = filtered_df.rename(columns={'IMDB_votes': 'Votes','RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df['user_ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
+        filtered_df['user_count'] = filtered_df['Votes']
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]      
+        filtered_df = filtered_df[filtered_df.user_count > 10000]
+        del filtered_df['user_count']
+        del filtered_df['Votes'] 
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
         filtered_df = filtered_df.sort_values('user_ratings', ascending = False).head(20)
 
@@ -470,11 +497,16 @@ def get_top_20_plot_based_on_user_ratings(df, years, genres, ratings):
         fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')           
         return fig
     elif (ratings == "MC"):
-        filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "genres"]]   
-        filtered_df = filtered_df.rename(columns={'MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes'})     
+        filtered_df = df[["name", "year", "MC_users_rating", "MC_users_count", "IMDB_votes", "genres"]]   
+        filtered_df = filtered_df.rename(columns={'IMDB_votes': 'Votes','MC_users_rating': 'User Ratings', 'MC_users_count': 'User Votes'})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
         filtered_df = filtered_df[~filtered_df['User Ratings'].isin(['tbd'])]
+        filtered_df['user_count'] = filtered_df['Votes']
+        filtered_df = filtered_df[~pd.isnull(filtered_df.user_count)]      
+        filtered_df = filtered_df[filtered_df.user_count > 10000]
+        del filtered_df['user_count']
+        del filtered_df['Votes']         
         filtered_df['user_ratings'] = filtered_df['User Ratings'].apply(clean_integer).astype(float)
         
         filtered_df = filtered_df[~pd.isnull(filtered_df.user_ratings)]
