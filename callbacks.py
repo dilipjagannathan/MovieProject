@@ -166,7 +166,7 @@ def get_top20_data_table(df, years, genres, ratings):
 
         return html.Div([generate_data_table(filtered_df, 'top_20_table', True), html.Div(id="movie-details")])
     elif (ratings == "RT"):
-        filtered_df = df[["name", "year", "IMDB_votes",  "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "runtimeMinutes", "genres", "titleId", "IMDB_link"]]   
+        filtered_df = df[["name", "year", "IMDB_votes",  "RT_users_rating", "RT_users_count", "RT_critics_rating", "RT_critics_count", "runtimeMinutes", "genres", "IMDB_link"]]   
         filtered_df = filtered_df.rename(columns={'IMDB_votes': 'Votes','RT_users_rating': 'User Ratings', 'RT_users_count': 'User Votes', 'RT_critics_rating': 'Critics Ratings', 'RT_critics_count': 'Critics Votes', 'name': "Movie Name"})     
         filtered_df = filtered_df[filtered_df.year.isin(years)]
         filtered_df = filtered_df[filtered_df.genres.str.contains('|'.join(genres))]
